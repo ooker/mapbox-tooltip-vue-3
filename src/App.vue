@@ -3,9 +3,16 @@
   <div class="container">
     <div id="map" class="map" />
     <div class="info-panel">
-      <template v-if="people">
-        <h1>Nimi: {{ people[index].nimi }}</h1>
-        <h2>Hüüdnimi: {{ people[index].hüüdnimi }}</h2>
+      <template v-if="people && index != -1">
+        <div class="emoji">{{people[index].emoji}}</div>
+        <div>
+          <h1>{{ people[index].nimi }}</h1>
+          <h2>{{ people[index].hüüdnimi }}</h2>
+          <h4>{{ people[index].rühm }}</h4>
+        </div>
+        <div>
+          <InfoBar :value1="people[index].kujundamine" :value2="people[index].kodeerimine" :value3="people[index].asjaajamine" />
+        </div>
       </template>
     </div>
   </div>
@@ -18,30 +25,27 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { onMounted } from "vue";
 // import { createApp, defineComponent, ref, nextTick } from "vue";
 import { ref } from "vue";
-// import MyPopup from "@/components/MyPopup.vue";
+import InfoBar from "@/components/InfoBar.vue";
 
 export default {
+  components: {
+    InfoBar
+  },
   setup() {
     const title = ref("Unchanged Popup Title");
     const sheet = `https://sheets.googleapis.com/v4/spreadsheets/1OXlkK47osO7ZjOyQ3kqLg7_UZmPLG1GGTtLLJHk8Nhw/values/Sheet1?alt=json&majorDimension=ROWS&key=AIzaSyA5ofruKPLx4NuGvdi8OvE3aS6Vi8ADSME`
     let people = ref(null);
 
     let index = ref(-1);
-    // let loaded = false;
 
-    // extend mapboxGL Marker so we can pass in an onClick handler
     class ClickableMarker extends mapboxgl.Marker {
-      // new method onClick, sets _handleClick to a function you pass in
       onClick(handleClick) {
         this._handleClick = handleClick;
         return this;
       }
-      // the existing _onMapClick was there to trigger a popup
-      // but we are hijacking it to run a function we define
       _onMapClick(e) {
         const targetElement = e.originalEvent.target;
         const element = this._element;
-
         if (this._handleClick && (targetElement === element || element.contains((targetElement)))) {
           this._handleClick();
         }
@@ -62,22 +66,12 @@ export default {
             el.innerText = dude.emoji;
             el.className = "marker";
             new ClickableMarker(el)
-              .setLngLat([dude.long, dude.lat])
+              .setLngLat(dude.koordinaadid.split(", ").reverse())
               .onClick(() => { 
                 index.value = i;
               })
               .addTo(map);
           });
-
-        //   new ClickableMarker()
-        // .setLngLat([24.71454576451196, 58.6350362443377])
-        // .onClick(() => { // onClick() is a thing now!
-        //   // document.getElementById('info-box')
-        //   //   .innerHTML = `You clicked ${city.name}!`;
-        //   console.log('KLIKK, BABY!');
-        // })
-        // .addTo(map);
-
         });
       
       
@@ -126,8 +120,6 @@ export default {
       );
     }
 
-    
-
     return { title, index, people };
   },
 };
@@ -136,10 +128,12 @@ export default {
 <style>
 body{
   margin:0;padding:0;
+  font-family: sans-serif;
 }
 #map {
   height: 100vh;
 }
+
 .container {
   display: flex;
 }
@@ -147,10 +141,24 @@ body{
   flex: 3 3 75%;
 }
 .info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
   flex: 1 1 25%;
-  padding: 3vh;
+  padding: 3vh 4vw 16vh 4vw;
+  text-align: center;
 }
 .marker{
   font-size: 1.6em;
+}
+h1, h2{
+  margin: 0;
+}
+.label{
+  margin-bottom: 0.25rem;
+}
+.emoji {
+  font-size: 10vw;
 }
 </style>
