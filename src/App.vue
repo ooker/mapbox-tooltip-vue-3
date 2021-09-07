@@ -2,18 +2,8 @@
   <!-- <button @click="title = 'Changed Popup Title'">Change Title</button> -->
   <div class="container">
     <div id="map" class="map" />
-    <div class="info-panel">
-      <template v-if="people && index != -1">
-        <div class="emoji">{{people[index].emoji}}</div>
-        <div>
-          <h1>{{ people[index].nimi }}</h1>
-          <h2><i>"{{ people[index].hüüdnimi }}"</i></h2>
-          <h4>{{ people[index].rühm }}</h4>
-        </div>
-        <div>
-          <InfoBar :value1="people[index].kujundamine" :value2="people[index].kodeerimine" :value3="people[index].asjaajamine" />
-        </div>
-      </template>
+    <div class="sidebar">
+      <PersonView v-if="people && index != -1" :name="people[index].nimi" :nick="people[index].hüüdnimi" :emoji="people[index].emoji" :value2="people[index].kodeerimine" :value1="people[index].kujundamine" :value3="people[index].asjaajamine" />
     </div>
   </div>
 </template>
@@ -25,11 +15,11 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { onMounted } from "vue";
 // import { createApp, defineComponent, ref, nextTick } from "vue";
 import { ref } from "vue";
-import InfoBar from "@/components/InfoBar.vue";
+import PersonView from "@/components/PersonView.vue";
 
 export default {
   components: {
-    InfoBar
+    PersonView
   },
   setup() {
     const title = ref("Unchanged Popup Title");
@@ -98,6 +88,12 @@ export default {
 </script>
 
 <style>
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 body{
   margin:0;padding:0;
   font-family: sans-serif;
@@ -110,17 +106,12 @@ body{
   display: flex;
 }
 .map {
-  flex: 3 3 75%;
+  flex: 3 1 75%;
 }
-.info-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+.sidebar {
+  flex: 1 0 25%;
+}
 
-  flex: 1 1 25%;
-  padding: 3vh 4vw 16vh 4vw;
-  text-align: center;
-}
 .marker{
   font-size: 1.6em;
   cursor: pointer;
@@ -131,7 +122,5 @@ h1, h2{
 .label{
   margin-bottom: 0.25rem;
 }
-.emoji {
-  font-size: 10vw;
-}
+
 </style>

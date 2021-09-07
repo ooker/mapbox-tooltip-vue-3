@@ -23,11 +23,6 @@
 
 <script>
 
-// import { onMounted } from "vue";
-import { ref } from "vue";
-
-
-
 export default {
   props : {
     value1: {
@@ -44,27 +39,15 @@ export default {
     },
   },
   setup(props) {
-    const heihoo = ref(props.value1);
-
-    // const calcWidth = computed((v) => {
-    //   // return `width:30%`;
-    //   return `flex-grow: ${ v }`;
-    // });
-
-    // const calcWidth2 = (v) => {
-    //   // return `width:30%`;
-    //   return `flex-grow: ${ v }`;
-    // };
-
-    return {heihoo, props}
+    return {props}
   },
 };
 </script>
 
 <style>
   .bars{
+    align-self: flex-end;
     display: flex;
-    /* border: 1px solid black; */
     margin-top: 5vh;
     width:100%;
     border-radius: 1rem;
@@ -91,6 +74,6 @@ export default {
     border-radius: 50%;
   }
   .legend-item__label{
-    font-size: 0.85rem;
+    font-size: 0.75rem;
   }
 </style>
